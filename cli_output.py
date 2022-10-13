@@ -10,19 +10,20 @@ def print_formatted_table(entries):
     # Whitespace padding of header titles.
     header_id = f" ID "
     header_name = f" Name{' ' * 20}"
-    header_bday = f" Birthday "
-    header = f"¦{header_id}¦{header_name}¦{header_bday}¦"
+    dd_month = f" Birthday "
+    header = f"¦{header_id}¦{header_name}¦{dd_month}¦"
 
     # Header frame.
     id_fill = "-" * (len(header_id))
     name_fill = "-" * (len(header_name))
-    bday_fill = "-" * (len(header_bday))
-    frame = f"+{id_fill}+{name_fill}+{bday_fill}+"
+    dd_month_fill = "-" * (len(dd_month))
+    frame = f"+{id_fill}+{name_fill}+{dd_month_fill}+"
 
     # Format headers and surrounding frame.
     headers = f"{frame}\n{header}\n{frame}"
     print(headers)
 
+    # Format and print each row.
     for entry in entries:
         id_num = entry[0]
         if id_num < 10:
@@ -34,19 +35,22 @@ def print_formatted_table(entries):
         fill_space = " " * (len(header_name) - len(name) - 2)
         name = f"{name}{fill_space}"
 
-        bday = _format_date(entry[2])
+        bday_yy = entry[3]
+        bday_mmdd = entry[2]
+        bday_yymmdd = "".join([bday_yy, bday_mmdd])
+        dd_month = _format_yymmdd_date_to_dd_month(bday_yymmdd)
         # Fill space to make an evenly formatted table.
-        fill_space = " " * (len(header_bday) - len(bday) - 2)
-        bday = f"{bday}{fill_space}"
+        fill_space = " " * (len(dd_month) - len(dd_month) - 2)
+        dd_month = f"{dd_month}{fill_space}"
 
         # Format CLI table row.
-        output = f"¦ {id_num} ¦ {name} ¦ {bday} ¦"
+        output = f"¦ {id_num} ¦ {name} ¦ {dd_month} ¦"
         print(output)
         # Print bottom border of frame.
         print(frame)
 
 
-def _format_date(bday):
+def _format_yymmdd_date_to_dd_month(bday):
     """Format "yyyymmdd", "yymmdd" and "mmdd" dates to "dd month"."""
 
     # Print days left until birthday if less than 30 days.
