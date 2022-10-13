@@ -8,16 +8,18 @@ def print_formatted_table(entries):
     """
 
     # Whitespace padding of header titles.
-    header_id = f" ID "
+    header_id = " ID "
     header_name = f" Name{' ' * 20}"
-    dd_month = f" Birthday "
-    header = f"¦{header_id}¦{header_name}¦{dd_month}¦"
+    header_dd_month = " Birthday "
+    header_year = " Turning "
+    header = f"¦{header_id}¦{header_name}¦{header_dd_month}¦{header_year}¦"
 
     # Header frame.
-    id_fill = "-" * (len(header_id))
-    name_fill = "-" * (len(header_name))
-    dd_month_fill = "-" * (len(dd_month))
-    frame = f"+{id_fill}+{name_fill}+{dd_month_fill}+"
+    header_id_fill = "-" * (len(header_id))
+    header_name_fill = "-" * (len(header_name))
+    header_dd_month_fill = "-" * (len(header_dd_month))
+    header_year_fill = "-" * (len(header_year))
+    frame = f"+{header_id_fill}+{header_name_fill}+{header_dd_month_fill}+{header_year_fill}+"
 
     # Format headers and surrounding frame.
     headers = f"{frame}\n{header}\n{frame}"
@@ -40,11 +42,18 @@ def print_formatted_table(entries):
         bday_yymmdd = "".join([bday_yy, bday_mmdd])
         dd_month = _format_yymmdd_date_to_dd_month(bday_yymmdd)
         # Fill space to make an evenly formatted table.
-        fill_space = " " * (len(dd_month) - len(dd_month) - 2)
+        fill_space = " " * (len(header_dd_month) - len(dd_month) - 2)
         dd_month = f"{dd_month}{fill_space}"
 
+        # Year returned from _get_years_coming_bday() has leading 19.
+        # Meaning if someone turns 35 this year, the value returned will be 1935.
+        # Convert to string and slice out to work around this.
+        years_coming_bday = str(_get_years_coming_bday(bday_yymmdd))[-2:]
+        fill_space = " " * (len(header_year) - len(years_coming_bday) - 2)
+        years_coming_bday = f"{fill_space}{years_coming_bday}"
+
         # Format CLI table row.
-        output = f"¦ {id_num} ¦ {name} ¦ {dd_month} ¦"
+        output = f"¦ {id_num} ¦ {name} ¦ {dd_month} ¦ {years_coming_bday} ¦"
         print(output)
         # Print bottom border of frame.
         print(frame)
@@ -106,3 +115,20 @@ def _get_days_to_bday(bday):
     days_left = abs(bday - today)
 
     return days_left.days
+
+
+def _get_years_coming_bday(bday):
+    """Return days left as an integer."""
+    today = date.today()
+
+    bday_yy = int(bday[:-4])
+    bday_mm = int(bday[-4:-2])
+    bday_dd = int(bday[-2:])
+    bday = date(today.year, bday_mm, bday_dd)
+
+    if bday < today:
+        years = today.year - bday_yy
+    else:
+        years = today.year - bday_yy - 1
+
+    return years + 1
