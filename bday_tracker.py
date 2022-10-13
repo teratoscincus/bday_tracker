@@ -6,10 +6,10 @@ from date_validator import is_valid_yymmdd_date
 from cli_output import print_formatted_table
 
 # Settings.
-PATH_TO_DB = f"{pathlib.Path(__file__).parent.resolve()}/db.sqlite3"
+PATH_TO_DB = f"{pathlib.Path(__file__).parent.resolve()}/db_bdays.sqlite3"
 TABLE = "birthdays"
-COLUMNS = "id INTEGER PRIMARY KEY, name TEXT, birthday TEXT"
-COLUMN_NAMES = "name, birthday"
+COLUMNS = "id INTEGER PRIMARY KEY, name TEXT, birthday TEXT, year_of_birth TEXT"
+COLUMN_NAMES = "name, birthday, year_of_birth"
 
 # Database.
 db = SQLite3Database(PATH_TO_DB)
@@ -65,14 +65,28 @@ elif args.new_entry:
         name = args.new_entry[0]
         birthday = args.new_entry[1]
 
+    # Ensure YYMMDD format.
+    # Separate year, month, and day.
+    birthday_yy = birthday[:-4]
+    birthday_mm = birthday[-4:-2]
+    birthday_dd = birthday[-2:]
+    # Ensure year is in YY format and not YYYY.
+    birthday_yy = birthday_yy[-2:]
+
+    # Parse and validate YYMMDD date.
+    birthday = "".join([birthday_yy, birthday_mm, birthday_dd])
     if is_valid_yymmdd_date(birthday):
-        values = f"'{name}', '{birthday}'"
+        # Concatenate month and day.
+        birthday_mmdd = "".join([birthday_mm, birthday_dd])
+        # Write to database.
+        values = f"'{name}', '{birthday_mmdd}', '{birthday_yy}'"
         db.insert_row(TABLE, COLUMN_NAMES, values)
     else:
         print("Given date of birth is not a valid date.\nNo entry was made.")
 else:
     # Show all entries if no CLI arguments are given.
-    entries = db.get_all_rows(TABLE)
+    sql_clause_order_by_mmdd_date = "ORDER BY birthday"
+    entries = db.get_all_rows(TABLE, sql_clause_order_by_mmdd_date)
 
     if len(entries) > 0:
         # for entry in entries:
