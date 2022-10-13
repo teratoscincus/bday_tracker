@@ -72,9 +72,13 @@ class SQLite3Database:
 
         return self.cursor.fetchone()
 
-    def get_all_rows(self, table):
-        """Get all rows from specified table."""
-        self.cursor.execute(f"SELECT * FROM {table}")
+    def get_all_rows(self, table, clause=""):
+        """
+        Get all rows from specified table.
+        Optional argument for the clause parameter is expected to be a string, and
+        allows for additional clauses for the query.
+        """
+        self.cursor.execute(f"SELECT * FROM {table} {clause};")
 
         return self.cursor.fetchall()
 
