@@ -1,10 +1,11 @@
 from datetime import date
+from typing import Union, List, Tuple
 
 
-def print_formatted_table(entries):
+def print_formatted_table(entries: Union[Tuple, List][int, str, str, str]) -> None:
     """
-    Take a tuple or list as argument for the entries parameter and print neatly
-    formatted table.
+    Take a tuple or list, containing an integer followed by three strings as argument
+    for the entries parameter and print neatly formatted table.
     """
 
     # Whitespace padding of header titles.
@@ -19,7 +20,8 @@ def print_formatted_table(entries):
     header_name_fill = "-" * (len(header_name))
     header_dd_month_fill = "-" * (len(header_dd_month))
     header_year_fill = "-" * (len(header_year))
-    frame = f"+{header_id_fill}+{header_name_fill}+{header_dd_month_fill}+{header_year_fill}+"
+    frame = [header_id_fill, header_name_fill, header_dd_month_fill, header_year_fill]
+    frame = f"+{'+'.join(frame)}+"
 
     # Format headers and surrounding frame.
     headers = f"{frame}\n{header}\n{frame}"
@@ -59,7 +61,7 @@ def print_formatted_table(entries):
         print(frame)
 
 
-def _format_yymmdd_date_to_dd_month(bday):
+def _format_yymmdd_date_to_dd_month(bday: str) -> str:
     """Format "yyyymmdd", "yymmdd" and "mmdd" dates to "dd month"."""
 
     # Print days left until birthday if less than 30 days.
@@ -102,7 +104,7 @@ def _format_yymmdd_date_to_dd_month(bday):
     return f"{dd} {months[mm].capitalize()}"
 
 
-def _get_days_to_bday(bday):
+def _get_days_to_bday(bday: str) -> int:
     """Return days left as an integer."""
     today = date.today()
 
@@ -117,8 +119,8 @@ def _get_days_to_bday(bday):
     return days_left.days
 
 
-def _get_years_coming_bday(bday):
-    """Return days left as an integer."""
+def _get_years_coming_bday(bday: str) -> int:
+    """Return Nth birthday as an integer."""
     today = date.today()
 
     bday_yy = int(bday[:-4])
