@@ -2,7 +2,7 @@ from datetime import date
 from typing import Union, List, Tuple
 
 
-def print_formatted_table(entries: Union[Tuple, List][int, str, str, str]) -> None:
+def print_formatted_table(entries: tuple | list[int, str, str, str]) -> None:
     """
     Take a tuple or list, containing an integer followed by three strings as argument
     for the entries parameter and print neatly formatted table.
